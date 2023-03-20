@@ -1,0 +1,40 @@
+# scheme version
+version: "3.8"
+
+# defining services
+services:
+  # first service "app"
+  item-app:
+    # set anandailyasa/item-app:v1 as base image
+    image: anandailyasa/item-app:v1
+    # 
+    command: sh -c "npm install --production --unsafe-perm && npm run build && npm start"
+
+    # port mapping between host (80) and container (8080)
+    ports:
+      - 80:8080
+
+    # Create /app and use it as working directory for container
+    working_dir: /app
+
+    # bind mount current directory with /app in container
+    volumes:
+      - ./:/app
+
+    # Set environment variable for db hostname and app environment
+    environment:
+      NODE_ENV: production
+      DB_HOST: item-db
+
+  # second service "mongo-db"
+  # docker run -d --name mongo --network item-app --network-alias mongodb -v app-db:/data/db mongo:3
+  item-db:
+    # set mongo:3 as base image
+    image: mongo:3
+    # mount app-db volume to /data/db in container
+    volumes:
+      - app-db:/data/db
+
+# Create new volume "app-db"
+volumes:
+  app-db:
