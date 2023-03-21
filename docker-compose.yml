@@ -7,19 +7,13 @@ services:
   item-app:
     # set anandailyasa/item-app:v1 as base image
     image: anandailyasa/item-app:v1
-    # 
-    command: sh -c "npm install --production --unsafe-perm && npm run build && npm start"
 
     # port mapping between host (80) and container (8080)
     ports:
       - 80:8080
 
-    # Create /app and use it as working directory for container
-    working_dir: /app
-
-    # bind mount current directory with /app in container
-    volumes:
-      - ./:/app
+    depends_on:
+      - item-db
 
     # Set environment variable for db hostname and app environment
     environment:
