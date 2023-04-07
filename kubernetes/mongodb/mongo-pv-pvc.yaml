@@ -1,0 +1,32 @@
+apiVersion: v1
+# mengatur jenis objek yaitu persistent volume
+kind: PersistentVolume
+# mengatur metadata / informasi terkait objek yang akan dibuat
+metadata:
+  name: mongo-pv-volume
+  labels:
+    type: local
+# mengatur spesifikasi objek persistent volume yang akan dibuat
+spec:
+  storageClassName: manual
+  capacity:
+    storage: 1Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: "/mnt/data"
+---
+apiVersion: v1
+# mengatur jenis objek yaitu persistent volume claim
+kind: PersistentVolumeClaim
+# mengatur metadata / informasi terkait objek yang akan dibuat
+metadata:
+  name: mongo-pv-claim
+# mengatur spesifikasi objek persistent volume claim yang akan dibuat
+spec:
+  storageClassName: manual
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi

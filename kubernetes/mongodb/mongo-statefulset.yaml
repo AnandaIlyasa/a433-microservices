@@ -1,0 +1,67 @@
+apiVersion: apps/v1
+# mengatur jenis objek yaitu statefulset
+kind: StatefulSet
+# mengatur metadata / informasi terkait objek yang akan dibuat
+metadata:
+  name: mongodb
+# mengatur spesifikasi objek statefulset yang akan dibuat seperti 
+# konfigurasi image, container, port, dll
+spec:
+  serviceName: "mongodb"
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mongodb
+  template:
+    metadata:
+      labels:
+        app: mongodb
+    # mendefinisikan spesifikasi container di dalam pod
+    spec:
+      containers:
+        - name: mongodb
+          image: mongo
+          ports:
+            - containerPort: 27017
+          # mendefinisikan lokasi mounting dari volume yang dibuat
+          volumeMounts:
+            - name: config-volume
+              mountPath: /etc/mongo
+            - name: data-volume
+              mountPath: /data/db
+            - name: mongo-creds
+              mountPath: /etc/mongo-credentials
+          # mendefinisikan beberapa environment variable
+          env:
+            - name: MONGO_INITDB_ROOT_USERNAME_FILE
+              valueFrom:
+                secretKeyRef:
+                  name: mongo-creds
+                  key: MONGO_ROOT_USERNAME
+            - name: MONGO_INITDB_ROOT_PASSWORD_FILE
+              valueFrom:
+                secretKeyRef:
+                  name: mongo-creds
+                  key: MONGO_ROOT_PASSWORD
+          # command yang akan dieksekusi pada pod
+          command: [ "mongod", "--config", "/etc/mongo/mongo.conf" ]
+      # mendefinisikan volume untuk digunakan pada pod dan sumber nya
+      volumes:
+        - name: config-volume
+          configMap:
+            name: mongo-configmap
+        - name: data-volume
+          persistentVolumeClaim:
+            claimName: mongo-pv-claim
+        - name: mongo-creds
+          secret:
+            secretName: mongo-creds
+  # mendefinisikan pvc objek yang akan dipakai untuk terhubung ke persistent volume 
+  volumeClaimTemplates:
+    - metadata:
+        name: mongo-pv-claim
+      spec:
+        accessModes: [ "ReadWriteOnce" ]
+        resources:
+          requests:
+            storage: 1Gi
