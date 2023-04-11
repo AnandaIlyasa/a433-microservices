@@ -5,14 +5,17 @@ kind: StatefulSet
 metadata:
   name: mongodb
 # mengatur spesifikasi objek statefulset yang akan dibuat seperti 
-# konfigurasi image, container, port, dll
+# konfigurasi pod, image, container, port, dll
 spec:
-  serviceName: "mongodb"
+  serviceName: mongodb
+  # jumlah pod yang akan dibuat
   replicas: 1
+  # selector untuk mencari pod dengan label app:mongodb yang akan menjadi bagian dari statefulset
   selector:
     matchLabels:
       app: mongodb
   template:
+    # metadata dari pod digunakan untuk memberi label app:monngodb pada pod
     metadata:
       labels:
         app: mongodb
@@ -34,15 +37,9 @@ spec:
           # mendefinisikan beberapa environment variable
           env:
             - name: MONGO_INITDB_ROOT_USERNAME_FILE
-              valueFrom:
-                secretKeyRef:
-                  name: mongo-creds
-                  key: MONGO_ROOT_USERNAME
+              value: /etc/mongo-credentials/MONGO_ROOT_USERNAME
             - name: MONGO_INITDB_ROOT_PASSWORD_FILE
-              valueFrom:
-                secretKeyRef:
-                  name: mongo-creds
-                  key: MONGO_ROOT_PASSWORD
+              value: /etc/mongo-credentials/MONGO_ROOT_PASSWORD
           # command yang akan dieksekusi pada pod
           command: [ "mongod", "--config", "/etc/mongo/mongo.conf" ]
       # mendefinisikan volume untuk digunakan pada pod dan sumber nya

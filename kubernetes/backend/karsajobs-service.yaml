@@ -3,7 +3,7 @@ kind: Service
 metadata:
   name: karsajobs
   labels:
-    app: microservices
+    tier: backend
 spec:
   ports:
   - port: 8080

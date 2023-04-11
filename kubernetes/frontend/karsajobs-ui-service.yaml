@@ -3,7 +3,6 @@ kind: Service
 metadata:
   name: karsajobs-ui
   labels:
-    app: microservices
     tier: frontend
 spec:
   ports:
