@@ -1,0 +1,2 @@
+https://github.com/AnandaIlyasa/a433-microservices/pkgs/container/order-service
+https://github.com/AnandaIlyasa/a433-microservices/pkgs/container/shipping-service
