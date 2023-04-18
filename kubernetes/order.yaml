@@ -19,7 +19,7 @@ spec:
           image: ghcr.io/anandailyasa/order-service:order-service
           env:
           - name: AMQP_URL
-            value: amqp://rabbitmq:5672
+            value: amqp://rabbitmq.default:5672
           ports:
             - containerPort: 3000
 ---
